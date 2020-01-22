@@ -13,9 +13,10 @@ class VacancyList(APIView):
         """
         Вывод всех вакансий со всеми статусами
         """
+        state = 'archive'
         state = request.GET.get('state')
         owner = request.GET.get('owner')
-        queryset = Vacancy.objects.all()
+        queryset = Vacancy.objects.exclude(state=u'ARCHIVE')
         if state is not None:
             queryset = Vacancy.objects.filter(state=str(state).upper())
         if owner is not None:
