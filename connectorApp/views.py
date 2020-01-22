@@ -24,24 +24,25 @@ class VacancyList(APIView):
         return Response({'data': serializer.data})
 
     def post(self, request):
-        # a = [{"id": 5, "title": "Vacancy 1", "description": None, "state": "ARCHIVE", "owner": None},
-        #      {"id": 4, "title": "Vacancy 2", "description": "Vacancy description long text", "state": "ACTIVE",
-        #       "owner": 5631}]]
+        # vacancies = [{"id": 5, "title": "Vacancy 1", "description": None, "state": "ARCHIVE", "owner": None},
+        #      {"id": 6, "title": "Vacancy 2", "description": "Vacancy description long text", "state": "ACTIVE",
+        #       "owner": 5631}]
         url = 'http://A'
         vacancies = requests.get(url).json()
         for vacancy in vacancies:
             serializer = VacancySerializer(data=vacancy)
             if serializer.is_valid():
                 serializer.save()
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request):
-        pass
+    def patch(self, request):
+        url = 'http://A'
+        vacancies = requests.get(url).json()
 
+        my_vac = Vacancy.objects.all()
+        for i in vacancies:
+            vac = my_vac.get(id=i['id'])
+            vac.state = i['state']
+            serializer = VacancySerializer(vac, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
 
-# class AddNewVacancy(APIView):
-#     """
-#     Проверка новых вакансий и обновление уже имеющихся
-#     """
-#     url = 'A'
-#     res = requests.get(url).json()
